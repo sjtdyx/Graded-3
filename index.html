@@ -1,0 +1,594 @@
+//Ai_assisted
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ghibli Park Booking</title>
+
+  <!-- Bootstrap -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div id="app" class="container py-5">
+
+  <h1 class="text-center mb-5">
+    Ghibli Park Booking
+  </h1>
+
+  <div class="accordion" id="bookingAccordion">
+
+    <!-- Personal Details -->
+    <div class="accordion-item mb-3">
+
+      <h2 class="accordion-header">
+
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#personalDetails"
+        >
+          Personal Details
+        </button>
+
+      </h2>
+
+      <div
+        id="personalDetails"
+        class="accordion-collapse collapse show"
+      >
+
+        <div class="accordion-body">
+
+          <!-- Full Name -->
+          <div class="mb-3">
+
+            <label class="form-label">
+              Full Name
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              v-model="form.fullName"
+            >
+
+            <span class="text-danger">
+              {{ errors.fullName }}
+            </span>
+
+          </div>
+
+          <!-- DOB -->
+          <div class="mb-3">
+
+            <label class="form-label">
+              Date of Birth
+            </label>
+
+            <input
+              type="date"
+              class="form-control"
+              v-model="form.dob"
+            >
+
+            <span class="text-danger">
+              {{ errors.dob }}
+            </span>
+
+          </div>
+
+          <!-- Gender -->
+          <div class="mb-3">
+
+            <label class="form-label">
+              Gender
+            </label>
+
+            <div class="form-check">
+
+              <input
+                class="form-check-input"
+                type="radio"
+                value="Male"
+                v-model="form.gender"
+              >
+
+              <label class="form-check-label">
+                Male
+              </label>
+
+            </div>
+
+            <div class="form-check">
+
+              <input
+                class="form-check-input"
+                type="radio"
+                value="Female"
+                v-model="form.gender"
+              >
+
+              <label class="form-check-label">
+                Female
+              </label>
+
+            </div>
+
+            <span class="text-danger">
+              {{ errors.gender }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Ghibli Park -->
+    <div class="accordion-item mb-3">
+
+      <h2 class="accordion-header">
+
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#parkSelection"
+        >
+          Ghibli Park Selection
+        </button>
+
+      </h2>
+
+      <div
+        id="parkSelection"
+        class="accordion-collapse collapse"
+      >
+
+        <div class="accordion-body">
+
+         
+          <!-- Error -->
+          <div
+            v-if="placesError"
+            class="alert alert-danger"
+          >
+            {{ placesError }}
+          </div>
+
+          <!-- Cards -->
+          <div class="row">
+
+            <div
+              class="col-md-4 mb-4"
+              v-for="place in places"
+              :key="place.id"
+            >
+
+              <div
+                class="card place-card h-100"
+                @click="togglePlace(place)"
+                :class="{
+                  selected:
+                  selectedPlaces.includes(place.id)
+                }"
+              >
+
+                <img
+                  :src="place.image"
+                  class="card-img-top"
+                >
+
+                <div class="card-body">
+
+                  <div
+                    v-if="selectedPlaces.includes(place.id)"
+                    class="badge bg-success mb-2"
+                  >
+                    Selected
+                  </div>
+
+                  <h5 class="card-title">
+                    {{ place.name }}
+                  </h5>
+
+                  <p class="card-text">
+                    {{ place.description }}
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <span class="text-danger">
+            {{ errors.places }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Visitors -->
+    <div class="accordion-item mb-3">
+
+      <h2 class="accordion-header">
+
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#visitorDetails"
+        >
+          Visitors Details
+        </button>
+
+      </h2>
+
+      <div
+        id="visitorDetails"
+        class="accordion-collapse collapse"
+      >
+
+        <div class="accordion-body">
+
+          <div class="mb-3">
+
+            <label class="form-label">
+              Total Visitors
+            </label>
+
+            <input
+              type="number"
+              min="1"
+              class="form-control"
+              v-model="form.visitors"
+            >
+
+            <span class="text-danger">
+              {{ errors.visitors }}
+            </span>
+
+          </div>
+
+          <div class="mb-3">
+
+            <label class="form-label">
+              Children
+            </label>
+
+            <input
+              type="number"
+              min="0"
+              class="form-control"
+              v-model="form.children"
+            >
+
+            <span class="text-danger">
+              {{ errors.children }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Accommodation -->
+    <div class="accordion-item mb-3">
+
+      <h2 class="accordion-header">
+
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#accommodation"
+        >
+          Accommodation
+        </button>
+
+      </h2>
+
+      <div
+        id="accommodation"
+        class="accordion-collapse collapse"
+      >
+
+        <div class="accordion-body">
+
+          <select
+            class="form-select"
+            v-model="form.accommodation"
+          >
+
+            <option value="">
+              Select Accommodation
+            </option>
+
+            <option
+              v-for="option in accommodationOptions"
+              :key="option"
+              :value="option"
+            >
+              {{ option }}
+            </option>
+
+          </select>
+
+          <span class="text-danger">
+            {{ errors.accommodation }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Payment -->
+    <div class="accordion-item mb-3">
+
+      <h2 class="accordion-header">
+
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#payment"
+        >
+          Payment Details
+        </button>
+
+      </h2>
+
+      <div
+        id="payment"
+        class="accordion-collapse collapse"
+      >
+
+        <div class="accordion-body">
+
+          <!-- Cardholder -->
+          <div class="mb-3">
+
+            <label class="form-label">
+              Cardholder Name
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              v-model="form.cardholder"
+            >
+
+            <span class="text-danger">
+              {{ errors.cardholder }}
+            </span>
+
+          </div>
+
+          <!-- Card Number -->
+          <div class="mb-3">
+
+            <label class="form-label">
+              Card Number
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              v-model="form.cardNumber"
+            >
+
+            <span class="text-danger">
+              {{ errors.cardNumber }}
+            </span>
+
+          </div>
+
+          <!-- Expiry -->
+          <div class="mb-3">
+
+            <label class="form-label">
+              Expiry Date
+            </label>
+
+            <input
+              type="month"
+              class="form-control"
+              v-model="form.expiry"
+            >
+
+            <span class="text-danger">
+              {{ errors.expiry }}
+            </span>
+
+          </div>
+
+          <!-- CVV -->
+          <div class="mb-3">
+
+            <label class="form-label">
+              CVV
+            </label>
+
+            <input
+              type="password"
+              class="form-control"
+              v-model="form.cvv"
+            >
+
+            <span class="text-danger">
+              {{ errors.cvv }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- General Error -->
+  <div
+    v-if="generalError"
+    class="alert alert-danger mt-4"
+  >
+    {{ generalError }}
+  </div>
+
+  <!-- Button -->
+  <div class="text-center mt-4">
+
+    <button
+      class="btn btn-success btn-lg"
+      @click="generateItinerary"
+    >
+      Generate Itinerary
+    </button>
+
+  </div>
+
+  
+ <!-- Summary -->
+<div
+  v-if="showSummary"
+  class="card mt-5 shadow p-4"
+>
+
+  <h1 class="text-success mb-4">
+    Your Ghibli Park Itinerary
+  </h1>
+
+  <hr>
+
+  <!-- Personal Details -->
+  <h3 class="mt-4">
+    Personal Details
+  </h3>
+
+  <p>
+    <strong>Name:</strong>
+    {{ form.fullName }}
+  </p>
+
+  <p>
+    <strong>Gender:</strong>
+    {{ form.gender }}
+  </p>
+
+  <p>
+    <strong>Date of Birth:</strong>
+    {{ form.dob }}
+  </p>
+
+  <!-- Selected Places -->
+  <h3 class="mt-4">
+    Selected Park Places
+  </h3>
+
+  <ul>
+
+    <li
+      v-for="placeId in selectedPlaces"
+      :key="placeId"
+    >
+      {{
+        places.find(
+          p => p.id === placeId
+        )?.name
+      }}
+    </li>
+
+  </ul>
+
+  <!-- Visitors -->
+  <h3 class="mt-4">
+    Visitors Details
+  </h3>
+
+  <p>
+    <strong>Total Visitors:</strong>
+    {{ form.visitors }}
+  </p>
+
+  <p>
+    <strong>Children:</strong>
+    {{ form.children }}
+  </p>
+
+  <!-- Accommodation -->
+  <h3 class="mt-4">
+    Accommodation
+  </h3>
+
+  <p>
+    <strong>Selected Option:</strong>
+    {{ form.accommodation }}
+  </p>
+
+  <!-- Payment -->
+  <h3 class="mt-4">
+    Payment Details
+  </h3>
+
+  <p>
+    <strong>Name on Card:</strong>
+    {{ form.cardholder }}
+  </p>
+
+  <p>
+    <strong>Card Number:</strong>
+    **** **** ****
+    {{ form.cardNumber.slice(-4) }}
+  </p>
+
+  <p>
+    <strong>Expiration Date:</strong>
+    {{ form.expiry }}
+  </p>
+
+  <p>
+    <strong>CVC:</strong>
+    Provided
+  </p>
+
+</div>
+</div>
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Vue -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>

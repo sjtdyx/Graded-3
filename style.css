@@ -1,0 +1,40 @@
+.place-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.place-card.selected {
+  border-color: #28a745;
+  background-color: #e8f5e9;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.place-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+
+@media(max-width:768px){
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .accordion-button {
+    font-size: 1rem;
+  }
+
+}
+
+body {
+  background: linear-gradient(135deg, #eef7f0, #ffffff);
+}
+
+
+.accordion-item {
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
