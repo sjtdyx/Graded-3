@@ -1,4 +1,4 @@
-//I use AI to assist 
+
 const app = Vue.createApp({
 
   data() {
